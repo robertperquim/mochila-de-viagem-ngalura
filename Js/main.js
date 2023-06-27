@@ -24,9 +24,9 @@ form.addEventListener("submit", (evento) => {
 
     atualizaElemento(itemAtual);
 
-    itens[existe.id] = itemAtual;
+    itens[itens.findIndex((elemento) => elemento.id === existe.id)] = itemAtual;
   } else {
-    itemAtual.id = itens.length;
+    itemAtual.id = itens[itens.length - 1] ? itens[itens.length - 1].id + 1 : 0;
 
     criaElemento(itemAtual);
 
@@ -49,7 +49,7 @@ function criaElemento(item) {
   novoItem.appendChild(numeroItem);
   novoItem.innerHTML += item.nome;
 
-  novoItem.appendChild(botaoDeleta());
+  novoItem.appendChild(botaoDeleta(item.id));
 
   lista.appendChild(novoItem);
 }
@@ -59,17 +59,29 @@ function atualizaElemento(item) {
     item.quantidade;
 }
 
-function botaoDeleta() {
+function botaoDeleta(id) {
   const elementoBota = document.createElement("button");
   elementoBota.innerText = "X";
 
   elementoBota.addEventListener("click", function () {
-    deletaElemento(this.parentNode);
+    deletaElemento(this.parentNode, id);
   });
 
   return elementoBota;
 }
 
-function deletaElemento(tag) {
+function deletaElemento(tag, id) {
   tag.remove();
+
+  //remover um item do array
+  itens.splice(
+    itens.findIndex((elemento) => elemento.id === id),
+    1
+  );
+
+  console.log(itens);
+
+  //escrever no localstorage
+
+  localStorage.setItem("itens", JSON.stringify(itens));
 }
